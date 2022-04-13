@@ -9,7 +9,7 @@ jobs:
     steps:
     - name: Job 1
       id: job1
-      uses: jeff-vincent/orka-actions-up-org@main
+      uses: jeff-vincent/orka-actions-up-org@1.0.0
       with:
         orkaUser: ${{ secrets.ORKA_USER }}
         orkaPass: ${{ secrets.ORKA_PASS }}
