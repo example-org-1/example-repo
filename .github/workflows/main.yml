@@ -41,7 +41,7 @@ jobs:
     steps:
     - name: Job 3
       id: job3
-      uses: jeff-vincent/orka-actions-down@vorg
+      uses: jeff-vincent/orka-actions-down@org
       with:
         orkaUser: ${{ secrets.ORKA_USER }}
         orkaPass: ${{ secrets.ORKA_PASS }}
