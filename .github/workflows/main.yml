@@ -5,9 +5,8 @@ on:
 
 jobs:
   job1:
-    runs-on: self-hosted          # NOTE: both orka-actions-up and orka-actions-down run on `ubuntu-latest`
+    runs-on: [self-hosted, macOS]
     steps:
     - name: Job 1
       id: job1
       run: echo 'This is a self-hosted runner'
-
