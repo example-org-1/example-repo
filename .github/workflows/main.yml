@@ -17,7 +17,7 @@ jobs:
     - up
     runs-on:
     - self-hosted
-		- "${{ needs.up.outputs.vm-name }}"
+- "${{ needs.up.outputs.vm-name }}"
     steps:
     - name: Set env var
       run: echo "DEVELOPER_DIR=$(xcode-select --print-path)" >> $GITHUB_ENV
