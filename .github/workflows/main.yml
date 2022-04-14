@@ -1,104 +1,54 @@
-name: Build
-true:
-  pull_request:
-    branches:
-    - master
-    - develop
+on:
   push:
     branches:
-    - master
-    - develop
+      - main
+
 jobs:
-  XCBuild:
-    env:
-      DESTINATION: platform=iOS Simulator,name=iPhone 11
-      PROJECT: Nextcloud.xcodeproj
-    needs:
-    - spin-up
-    runs-on:
-    - self-hosted
-    - ${{ needs.spin-up.outputs.vm-name }}
+  job1:
+    runs-on: ubuntu-latest          # NOTE: both orka-actions-up and orka-actions-down run on `ubuntu-latest`
     steps:
-    - name: Set env var
-      run: echo "DEVELOPER_DIR=$(xcode-select --print-path)" >> $GITHUB_ENV
-    - uses: actions/checkout@v2
-    - id: carthage-cache
-      name: Restore Carhage Cache
-      uses: actions/cache@v2
-      with:
-        key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
-        path: Carthage
-        restore-keys: '${{ runner.os }}-carthage-
-
-          '
-    - if: steps.carthage-cache.outputs.cache-hit != 'true'
-      name: Carthage
-      run: carthage bootstrap --use-xcframeworks --platform iOS
-    - name: Download GoogleService-Info.plist
-      run: wget "https://raw.githubusercontent.com/firebase/quickstart-ios/master/mock-GoogleService-Info.plist"
-        -O GoogleService-Info.plist
-    - env:
-        SCHEME: Nextcloud
-      name: Build & Test Nextcloud iOS
-      run: 'xcodebuild clean build test -project $PROJECT -scheme "$SCHEME" -destination
-        "$DESTINATION"
-
-        '
-    - env:
-        SCHEME: Share
-      name: Build iOS Share
-      run: 'xcodebuild build -project $PROJECT -scheme "$SCHEME" -destination "$DESTINATION"
-
-        '
-    - env:
-        SCHEME: File Provider Extension
-      name: Build iOS File Extension
-      run: 'xcodebuild build -project $PROJECT -scheme "$SCHEME" -destination "$DESTINATION"
-
-        '
-    - env:
-        SCHEME: Notification Service Extension
-      name: Build iOS Notification Extension
-      run: 'xcodebuild build -project $PROJECT -scheme "$SCHEME" -destination "$DESTINATION"
-
-        '
-  spin-up:
-    outputs:
-      vm-name: ${{ steps.job1.outputs.vm-name }}
-    runs-on: ubuntu-latest
-    steps:
-    - id: spin-up
-      name: spin-up
+    - name: Job 1
+      id: job1
       uses: jeff-vincent/orka-actions-up-org@1.0.0
       with:
-        coreCount: 6
-        githubOrg: example-org-1
-        githubPat: ${{ secrets.GH_PAT }}
-        orkaBaseImage: gha-org-agent.img
-        orkaPass: ${{ secrets.ORKA_PASS }}
         orkaUser: ${{ secrets.ORKA_USER }}
-        vcpuCount: 6
-        vpnAddress: ${{ secrets.VPN_ADDRESS }}
-        vpnPassword: ${{ secrets.VPN_PASSWORD }}
-        vpnServerCert: ${{ secrets.VPN_SERVER_CERT }}
+        orkaPass: ${{ secrets.ORKA_PASS }}
+        orkaBaseImage: gha-org-agent.img
+        githubPat: ${{ secrets.GH_PAT }}
+        githubOrg: 'example-org-1'
         vpnUser: ${{ secrets.VPN_USER }}
-  tear-down:
+        vpnPassword: ${{ secrets.VPN_PASSWORD }}
+        vpnAddress: ${{ secrets.VPN_ADDRESS }}
+        vpnServerCert: ${{ secrets.VPN_SERVER_CERT }}
+        vcpuCount: 3
+        coreCount: 3
+    outputs:
+      vm-name: ${{ steps.job1.outputs.vm-name }}
+         
+  job2:            # NOTE: this is where your macOS-based, GitHub Actions workflow will be executed.
+    needs: job1     
+    runs-on: [self-hosted, "${{ needs.job1.outputs.vm-name }}"]     # NOTE: this section of the workflow can contain any number of seperate jobs,
+    steps:                                                          # but each must have this `runs-on` value.
+    - name: Job 2
+      id: job2
+      run: |
+        sw_vers
+        
+  job3:
     if: always()
-    needs:
-    - spin-up
-    - XCBuild
-    runs-on: ubuntu-latest
+    needs: [job1, job2]               # NOTE: all jobs you wish to run on the macOS instance, 
+    runs-on: ubuntu-latest            # along with the `orka-actions-up` job, must be listed here.
     steps:
-    - id: tear-down
-      name: tear-down
+    - name: Job 3
+      id: job3
       uses: jeff-vincent/orka-actions-down-org@1.0.0
       with:
-        githubOrg: example-org-1
-        githubPat: ${{ secrets.GH_PAT }}
-        orkaPass: ${{ secrets.ORKA_PASS }}
         orkaUser: ${{ secrets.ORKA_USER }}
-        vmName: ${{ needs.job1.outputs.vm-name }}
-        vpnAddress: ${{ secrets.VPN_ADDRESS }}
-        vpnPassword: ${{ secrets.VPN_PASSWORD }}
-        vpnServerCert: ${{ secrets.VPN_SERVER_CERT }}
+        orkaPass: ${{ secrets.ORKA_PASS }}
+        githubPat: ${{ secrets.GH_PAT }}
+        githubOrg: 'example-org-1'
         vpnUser: ${{ secrets.VPN_USER }}
+        vpnPassword: ${{ secrets.VPN_PASSWORD }}
+        vpnAddress: ${{ secrets.VPN_ADDRESS }}
+        vpnServerCert: ${{ secrets.VPN_SERVER_CERT }}
+        vmName: ${{ needs.job1.outputs.vm-name }}
