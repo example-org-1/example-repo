@@ -6,7 +6,7 @@ on:
     - develop
   push:
     branches:
-    - main
+    - master
     - develop
 jobs:
   XCBuild:
@@ -17,7 +17,7 @@ jobs:
     - up
     runs-on:
     - self-hosted
-    - "${{ needs.up.outputs.vm-name }}"
+		- "${{ needs.up.outputs.vm-name }}"
     steps:
     - name: Set env var
       run: echo "DEVELOPER_DIR=$(xcode-select --print-path)" >> $GITHUB_ENV
@@ -102,4 +102,3 @@ jobs:
         vpnPassword: ${{ secrets.VPN_PASSWORD }}
         vpnServerCert: ${{ secrets.VPN_SERVER_CERT }}
         vpnUser: ${{ secrets.VPN_USER }}
-
