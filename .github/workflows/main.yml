@@ -6,7 +6,7 @@ on:
     - develop
   push:
     branches:
-    - main
+    - master
     - develop
 jobs:
   XCBuild:
@@ -14,10 +14,10 @@ jobs:
       DESTINATION: platform=iOS Simulator,name=iPhone 11
       PROJECT: Nextcloud.xcodeproj
     needs:
-    - spin-up
+    - up
     runs-on:
     - self-hosted
-    - "${{ needs.spin-up.outputs.vm-name }}"
+    - ${{ needs.spin-up.outputs.vm-name }}
     steps:
     - name: Set env var
       run: echo "DEVELOPER_DIR=$(xcode-select --print-path)" >> $GITHUB_ENV
