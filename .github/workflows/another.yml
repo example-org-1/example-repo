@@ -13,14 +13,14 @@ on:
   push:
     branches:
     - main
-    paths:
-    - .github/workflows/abtesting.yml
-    - abtesting/**
-    - scripts/*
-    - scripts/abtesting.sh
-    - '!abtesting/*.md'
-    - '!abtesting/Design/**'
-  workflow_dispatch: null
+#     paths:
+#     - .github/workflows/abtesting.yml
+#     - abtesting/**
+#     - scripts/*
+#     - scripts/abtesting.sh
+#     - '!abtesting/*.md'
+#     - '!abtesting/Design/**'
+#   workflow_dispatch: null
 env:
   SAMPLE: ABTesting
   secrets_passphrase: ${{ secrets.GHASECRETSGPGPASSPHRASE1 }}
