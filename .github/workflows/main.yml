@@ -6,7 +6,7 @@ on:
 jobs:
   job2:            # NOTE: this is where your macOS-based, GitHub Actions workflow will be executed.
     needs: up     
-    runs-on: [self-hosted, "${{ needs.job1.outputs.vm-name }}"]     # NOTE: this section of the workflow can contain any number of seperate jobs,
+    runs-on: [self-hosted, "${{ needs.up.outputs.vm-name }}"]     # NOTE: this section of the workflow can contain any number of seperate jobs,
     steps:                                                          # but each must have this `runs-on` value.
     - name: Job 2
       id: job2
