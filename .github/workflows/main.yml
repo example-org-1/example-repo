@@ -52,3 +52,4 @@ jobs:
         vpnPassword: ${{ secrets.VPN_PASSWORD }}
         vpnServerCert: ${{ secrets.VPN_SERVER_CERT }}
         vpnUser: ${{ secrets.VPN_USER }}
+
